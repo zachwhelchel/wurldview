@@ -42,6 +42,7 @@ class QuestionsController < ApplicationController
     end
 
     def question_params
-      params[:question]
+      # REVIEW - Not sure this is the safest way.
+      params.require(:question).permit(:title)
     end
 end
