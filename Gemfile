@@ -41,5 +41,14 @@ gem 'spring',        group: :development
 gem 'rails_12factor', group: :production
 gem 'puma'
 gem 'devise'
+gem 'omniauth'
+gem 'omniauth-twitter'
 gem 'cancancan'
 gem 'rolify'
+gem 'simple_form'
+gem "cocoon"
+gem 'bootstrap-sass', '~> 3.3.4'
+gem "state_machine"
+gem "js-routes"
+gem 'jquery-turbolinks'
+

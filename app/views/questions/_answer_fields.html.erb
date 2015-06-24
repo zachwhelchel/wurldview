@@ -1,0 +1,8 @@
+<div class="nested-fields">
+	  <div class="well">
+
+<%= f.input :title, as: :text, input_html: { rows: "5" }, label: 'Answer:' %> 
+<%= f.input :user_id, :as => :hidden, :input_html => { :value => current_user.id } %>
+<%= link_to_remove_association "Delete", f, :class => "btn btn-danger" %>
+</div>
+</div>

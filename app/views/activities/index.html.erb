@@ -1,0 +1,70 @@
+
+<%= javascript_tag do %>
+  var ready = function() {
+    $.ajax({
+      type:'POST',
+      url:'/users/update_activities_last_viewed',
+      success:function(){
+      }
+     });
+  };
+
+  ready();
+<% end %>
+
+
+<% if @activities.where("created_at > ?", current_user.activities_last_viewed).count == 0 %>
+
+<% else %>
+
+  <div class="page-header">
+    <h1>Notifications</h1>
+  </div>
+
+  <br>
+  <% @activities.where("created_at > ?", current_user.activities_last_viewed).each do |activity| %>
+  <div class="media">
+    <div class="media-left">
+      <a href="#">
+        <img class="media-object img-circle" src=<%= activity.user.twitter.image %>  style="width:36px;height:36px;border:0" alt="">
+      </a>
+    </div>
+    <div class="media-body">
+      <h4 class="media-heading"><%= link_to "@" + activity.user.twitter.nickname.downcase, user_path(activity.user) %> </h4>
+      <%= render partial: "activities/#{activity.targetable_type.underscore}/#{activity.action}", locals: { activity: activity } %> <br> <small style="color:#939393"><%= time_ago_in_words(activity.targetable.created_at) %> ago </small>
+    </div>
+  </div>
+  <br>
+<% end %>
+
+
+<% end %>
+
+
+
+<% if @activities.where("created_at <= ?", current_user.activities_last_viewed).count == 0 %>
+
+<% else %>
+
+  <div class="page-header">
+    <h1>Past Activity</h1>
+  </div>
+
+  <br>
+  <% @activities.where("created_at <= ?", current_user.activities_last_viewed).each do |activity| %>
+  <div class="media", style="opacity: 1.0;" >
+    <div class="media-left">
+      <a href="#">
+        <img class="media-object img-circle" src=<%= activity.user.twitter.image %>  style="width:36px;height:36px;border:0" alt="">
+      </a>
+    </div>
+    <div class="media-body">
+      <h4 class="media-heading"><%= link_to "@" + activity.user.twitter.nickname.downcase, user_path(activity.user) %> </h4>
+      <%= render partial: "activities/#{activity.targetable_type.underscore}/#{activity.action}", locals: { activity: activity } %> <br> <small style="color:#939393"><%= time_ago_in_words(activity.targetable.created_at) %> ago </small>
+    </div>
+  </div>
+  <br>
+
+<% end %>
+
+<% end %>

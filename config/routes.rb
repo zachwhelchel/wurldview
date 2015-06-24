@@ -1,7 +1,29 @@
 Rails.application.routes.draw do
-  resources :questions
 
-  devise_for :users
+  resources :questions do
+    resources :points
+    resources :answers
+  end
+
+  resources :user_follows
+
+  resources :activities, only: [:index]
+
+  root 'questions#index'
+
+  devise_for :users, class_name: 'FormUser', :controllers => { omniauth_callbacks: 'omniauth_callbacks' }
+
+  devise_scope :user do
+    get 'sign_in', :to => 'devise/sessions#new', :as => :new_user_session
+    delete 'sign_out', :to => 'devise/sessions#destroy', :as => :destroy_user_session
+  end
+
+  match '/users/:id/finish_signup' => 'users#finish_signup', via: [:get, :patch], :as => :finish_signup
+
+  resources :users, only: [:show]
+  post 'users/update_activities_last_viewed'
+
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

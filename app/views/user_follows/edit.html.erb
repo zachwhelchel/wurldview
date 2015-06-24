@@ -1,0 +1,14 @@
+<% if @user_follow %>
+
+	You currently follow <%= @user_follow.followed_user.email %>.
+
+	<br>
+	<br>
+
+	<%= simple_form_for @user_follow, method: :delete do |form| %>
+		<div class="form form-actions">
+			<%= submit_tag "Unfollow", class: 'btn btn-danger' %>
+		</div>
+	<% end %>
+
+<% end %>

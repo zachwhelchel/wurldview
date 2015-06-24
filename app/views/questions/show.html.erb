@@ -1,6 +1,262 @@
-<p id="notice"><%= notice %></p>
 
-<%= @question.title %>
 
-<%= link_to 'Edit', edit_question_path(@question) %> |
-<%= link_to 'Back', questions_path %>
+
+
+<script type="text/javascript">
+  $(document).ready(function(){
+
+
+function getUrlParameter(sParam)
+{
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++) 
+    {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam) 
+        {
+            return sParameterName[1];
+        }
+    }
+}          
+
+
+
+  var should_fade = $("#question-holder").is(":visible"); 
+
+  if (!should_fade) {
+
+    var question_back = getUrlParameter('question_back');
+
+    if (question_back) {
+
+        $("#question-holder").css('top', "30px");
+        $('#question-holder').fadeIn({queue: false, duration: 500});
+        $('#question-holder').animate({ top: "0px" }, 500);
+         
+    }
+    else {
+        $("#question-holder").css('top', "-30px");
+        $('#question-holder').fadeIn({queue: false, duration: 500});
+        $('#question-holder').animate({ top: "0px" }, 500);
+         
+         setTimeout(function () {
+            $('#footer').fadeIn({queue: false, duration: 500});
+          }, 300);
+    }
+
+}
+
+    $( "#from-question" ).click(function( ev ) {
+      ev.preventDefault();
+      var href = $(this).attr('href');
+      console.log(href)
+      $('#question-holder').fadeOut({queue: false, duration: 500});
+      $('#question-holder').animate({ top: "30px" }, 500);
+
+     setTimeout(function () {
+         window.location.href = href; //will redirect to your blog page (an ex: blog.html)
+      }, 500); //will call the function after 2 secs.
+
+
+    });
+
+    $( "#to-question" ).click(function( ev ) {
+      ev.preventDefault();
+      var href = $(this).attr('href');
+      console.log(href)
+      $('#footer').fadeOut({queue: false, duration: 500});
+      $('#question-holder').fadeOut({queue: false, duration: 500});
+      $('#question-holder').animate({ top: "-30px" }, 500);
+
+     setTimeout(function () {
+         window.location.href = href; //will redirect to your blog page (an ex: blog.html)
+      }, 500); //will call the function after 2 secs.
+
+
+    });
+
+
+  })
+</script>
+
+
+<div class="row">
+  <div class="col-md-1">
+  </div>
+
+  <div class="col-md-10">
+
+    <% if @question_from %>
+      <div hidden class="" id="question-holder" style="position:absolute;">
+    <% elsif params[:question_back] %>
+      <div hidden class="" id="question-holder" style="position:absolute;">
+    <% else %>
+      <div class="" id="question-holder" style="position:absolute;">
+    <% end %>
+
+      <div class="page-header" id="page-header">
+        <h1><%= @question.title %></h1>            
+
+        <div class="row">
+          <div class="col-md-2">
+            <br>
+            <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true" style="width:100%">
+                <img src=<%= @user_filtered_to.twitter.image%> class="img-circle" alt="" style="width:36px;height:36px;border:0">
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1" >
+                <% if @user_filtered_to.id != current_user.id %>
+                  <li><%= link_to question_path(@question, user_id: current_user.id), :class => "button small-button green-button" do %><h4><img src=<%= current_user.twitter.image%> class="img-circle" alt="" style="width:36px;height:36px;border:0"> @<%= current_user.twitter.nickname.downcase%></h4><% end %></li>
+                <% end %>
+                <% current_user.followed_users.each do |user| %>
+                    <% if @user_filtered_to != user %>
+                      <% if current_user.id != user.id %>
+                        <li><%= link_to question_path(@question, user_id: user.id), :class => "button small-button green-button" do %><h4><img src=<%= user.twitter.image%> class="img-circle" alt="" style="width:36px;height:36px;border:0"> @<%= user.twitter.nickname.downcase%></h4><% end %></li>
+                      <% end %>
+                    <% end %>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-1">
+            <% if @user_filtered_to.id == current_user.id %>
+            <br>
+            <%= link_to edit_question_path(@question), :class => "button " do %><span class="glyphicon glyphicon-pencil" style="width:36px; height:50px; font-size:36px; line-height: 50px;"></span><% end %>
+            <% end %>            
+          </div>
+        </div>
+        <br>
+      </div>
+
+      <br>
+      <% @user_filtered_to.points.where(question: @question).each do |point| %>
+        <% if point.answer %>
+
+          <div class="row">
+            <div class="col-md-1">
+              <span class="glyphicon glyphicon-arrow-down" style="width:36px; height:50px; font-size:36px; line-height: 50px;"></span>
+            </div>
+            <div class="col-md-11">
+              <span style="font-size:18px; font-weight: bold;">
+                <%= link_to point.answer.title, question_path(point.answer.question, user_id: @user_filtered_to.id, question_id_from: @question.id), id: "from-question" %>
+              </span>
+              <br>
+              <br>
+              <span style="font-size:18px;">
+                <%= point.title %>
+              </span>
+            </div>
+          </div>
+
+          <br>
+          <br>
+          <br>
+        <% else %> 
+
+
+          <div class="row">
+            <div class="col-md-1">
+
+              <span class="glyphicon glyphicon glyphicon-arrow-right" style="width:36px; height:50px; font-size:36px; line-height: 50px;"></span>
+
+            </div>
+            <div class="col-md-11">
+              <span style="font-size:18px;">
+                <%= point.title %>
+              </span>
+            </div>
+          </div>
+
+
+          <br>
+          <br>
+          <br>
+        <% end %>
+      <% end %>
+
+
+      <% @user_filtered_to.answers.where(question: @question).each do |answer| %>
+
+
+          <div class="row">
+            <div class="col-md-1">
+
+              <span class="glyphicon glyphicon glyphicon glyphicon-eye-open" style="width:36px; height:50px; font-size:36px; line-height: 50px;"></span>
+
+            </div>
+            <div class="col-md-11">
+              <span style="font-size:18px; font-weight:bold;">
+                <%= answer.title %>
+              </span>
+            </div>
+          </div>
+
+
+
+        <br>
+      <% end %>
+
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br> 
+      <br>
+      <br>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<% content_for :footer do %>
+
+<% if @question_from %>
+  <footer hidden class="footer footer-fixed-bottom" id="footer">
+
+    <div class="container">
+              <div class="row">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-1">
+                  <span class="glyphicon glyphicon glyphicon glyphicon-arrow-down" style="width:36px; height:50px; font-size:36px; line-height: 70px; color:#FFFFFF;"> </span>
+
+                </div>
+                <div class="col-md-10" style="padding-left: 0px;">
+                  <span style="font-size:20px;  color:#FFFFFF; height:70px; line-height: 70px;">
+                    <%= link_to @question_from.title, question_path(@question_from, user_id: @user_filtered_to.id, question_back: true), style: 'color:#FFFFFF;', id: "to-question"  %>
+                  </span>
+                </div>
+    </div>
+  </footer>
+
+<% end %>
+<%end%>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

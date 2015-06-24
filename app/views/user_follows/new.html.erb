@@ -1,0 +1,17 @@
+<% if @user_follow %>
+
+	
+    <div class="page-header">
+      <h1>Are you sure you want to follow @<%= @user_follow.followed_user.twitter.nickname.downcase %>?</h1>      
+    </div>
+
+	<br>
+
+	<%= simple_form_for @user_follow, method: :post do |form| %>
+		<div class="form form-actions">
+			<%= form.hidden_field :followed_user_id, value: @user_follow.followed_user.id %>
+			<%= submit_tag "Yes, Follow", class: 'btn btn-primary' %>
+		</div>
+	<% end %>
+
+<% end %>
