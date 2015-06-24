@@ -1,1 +1,3 @@
-Wrote an <%= link_to "answer", root_path%> to the question: "<%= link_to activity.targetable.question.title, root_path%>"
+Wrote an answer to the question: "<%= link_to activity.targetable.question.title, question_path(activity.targetable.question, user_id: activity.user.id) %>"
+
+
